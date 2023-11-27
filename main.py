@@ -1,7 +1,7 @@
 from sqlmodel import Session, select, or_, col
 from rich import print as rprint
 import sqlalchemy as sa
-from create import create_heroes, create_heroes_rel  # noqa: F401
+from create import create_heroes, create_heroes_rel, create_heroes_rel_attrs  # noqa: F401
 from select_queries import select_heroes_rel
 from db import SQLModel, engine, Hero, Team
 
@@ -230,7 +230,8 @@ def main():
     # create_heroes_rel()
     # select_heroes_rel()
     # update_heroes_rel()
-    update_heroes_rel_remove()
+    # update_heroes_rel_remove()
+    create_heroes_rel_attrs()
 
 
 if __name__ == "__main__":
