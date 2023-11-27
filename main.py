@@ -1,22 +1,12 @@
-from typing import Optional
-
-from sqlmodel import Field, Session, SQLModel, create_engine, select, or_, col
+from sqlmodel import Session, select, or_, col
 from rich import print as rprint
 import sqlalchemy as sa
+from create import create_heroes, create_heroes_rel
+from db import SQLModel, engine, Hero, Team
 
 
-class Hero(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str = Field(index=True)
-    secret_name: str
-    age: Optional[int] = Field(default=None, index=True)
-
-
-sqlite_file_name = "database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-engine = create_engine(sqlite_url, echo=True)
-# engine = create_engine(sqlite_url)
+def get_tables():
+    rprint(SQLModel.metadata.tables)
 
 
 def drop_tables():
@@ -26,57 +16,6 @@ def drop_tables():
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
-
-
-def print_objs(objs: list[SQLModel]):
-    for i, obj in enumerate(objs):
-        print(f"Hero {i}:", obj)
-
-
-def create_heroes():
-    hero_1 = Hero(name="Deadpond", secret_name="Dive Wilson")
-    hero_2 = Hero(name="Spider-Boy", secret_name="Pedro Parqueador")
-    hero_3 = Hero(name="Rusty-Man", secret_name="Tommy Sharp", age=48)
-    hero_4 = Hero(name="Tarantula", secret_name="Natalia Roman-on", age=32)
-    hero_5 = Hero(name="Black Lion", secret_name="Trevor Challa", age=35)
-    hero_6 = Hero(name="Dr. Weird", secret_name="Steve Weird", age=36)
-    hero_7 = Hero(name="Captain North America", secret_name="Esteban Rogelios", age=93)
-
-    with Session(engine) as session:
-        session.add(hero_1)
-        session.add(hero_2)
-        session.add(hero_3)
-        session.add(hero_4)
-        session.add(hero_5)
-        session.add(hero_6)
-        session.add(hero_7)
-        print("After adding to the session")
-        print_objs([hero_1, hero_2, hero_3])
-        session.commit()
-        print("After committing the session")
-        print_objs([hero_1, hero_2, hero_3])
-
-        print("After committing the session, show IDs")
-        print("Hero 1 ID:", hero_1.id)
-        print("Hero 2 ID:", hero_2.id)
-        print("Hero 3 ID:", hero_3.id)
-
-        print("After committing the session, show names")
-        print("Hero 1 name:", hero_1.name)
-        print("Hero 2 name:", hero_2.name)
-        print("Hero 3 name:", hero_3.name)
-
-        session.refresh(hero_1)
-        session.refresh(hero_2)
-        session.refresh(hero_3)
-
-        print("After refreshing the heroes")
-        print("Hero 1:", hero_1)
-        print("Hero 2:", hero_2)
-        print("Hero 3:", hero_3)
-
-    print("After the session closes")
-    print_objs([hero_1, hero_2, hero_3])
 
 
 def select_heroes():
@@ -198,12 +137,13 @@ def update_heroes():
         hero_2.age = 110
         session.add(hero_2)
         session.commit()
-        
+
         session.refresh(hero)
         session.refresh(hero_2)
 
         rprint("Updated hero 1 :", hero)
         rprint("Updated hero 2:", hero_2)
+
 
 def update_heroes_2():
     with Session(engine) as session:
@@ -232,6 +172,7 @@ def update_heroes_2():
         print("Updated hero 1:", hero_1)
         print("Updated hero 2:", hero_2)
 
+
 def delete_heroes():
     update_heroes_2()
     with Session(engine) as session:
@@ -253,13 +194,17 @@ def delete_heroes():
         if hero is None:
             print("There's no hero named Spider-Youngster")
 
+
 def main():
     # drop_tables()
     # create_db_and_tables()
+    get_tables()
     # create_heroes()
     # select_heroes()
     # update_heroes()
-    delete_heroes()
+    # delete_heroes()
+    create_heroes_rel()
+
 
 if __name__ == "__main__":
     main()
