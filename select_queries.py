@@ -30,3 +30,16 @@ def select_heroes_rel():
         results = session.exec(statement)
         for hero in results:
             rprint("Preventer Hero:", hero)
+
+def select_heroes_rel_attrs_read():
+    with Session(engine) as session:
+        statement = select(Hero).where(Hero.name == "Spider-Boy")
+        result = session.exec(statement)
+        hero_spider_boy = result.one()
+        rprint("Spider-Boy's team again:", hero_spider_boy.team)
+
+        statement = select(Team).where(Team.name == "Preventers")
+        result = session.exec(statement)
+        team_preventers = result.one()
+
+        rprint("Preventers heroes:", team_preventers.heroes)

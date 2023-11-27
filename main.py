@@ -2,7 +2,8 @@ from sqlmodel import Session, select, or_, col
 from rich import print as rprint
 import sqlalchemy as sa
 from create import create_heroes, create_heroes_rel, create_heroes_rel_attrs  # noqa: F401
-from select_queries import select_heroes_rel
+from select_queries import select_heroes_rel, select_heroes_rel_attrs_read
+from del_rel_attrs import update_heroes_del_rel
 from db import SQLModel, engine, Hero, Team
 
 
@@ -195,21 +196,23 @@ def delete_heroes():
         if hero is None:
             print("There's no hero named Spider-Youngster")
 
+
 def update_heroes_rel():
     with Session(engine) as session:
         hero_spider_boy = session.get(Hero, 3)
         team_preventers = session.get(Team, 1)
-        rprint(f"{hero_spider_boy} <-> {team_preventers} " )
+        rprint(f"{hero_spider_boy} <-> {team_preventers} ")
         hero_spider_boy.team_id = team_preventers.id
         session.add(hero_spider_boy)
         session.commit()
         session.refresh(hero_spider_boy)
         rprint("Updated hero:", hero_spider_boy)
 
+
 def update_heroes_rel_remove():
-    '''
-        Remove Data Connections
-    '''
+    """
+    Remove Data Connections
+    """
     with Session(engine) as session:
         hero_spider_boy = session.get(Hero, 3)
 
@@ -218,6 +221,7 @@ def update_heroes_rel_remove():
         session.commit()
         session.refresh(hero_spider_boy)
         rprint("No longer Preventer:", hero_spider_boy)
+
 
 def main():
     # drop_tables()
@@ -231,7 +235,9 @@ def main():
     # select_heroes_rel()
     # update_heroes_rel()
     # update_heroes_rel_remove()
-    create_heroes_rel_attrs()
+    # create_heroes_rel_attrs()
+    # select_heroes_rel_attrs_read()
+    update_heroes_del_rel()
 
 
 if __name__ == "__main__":
