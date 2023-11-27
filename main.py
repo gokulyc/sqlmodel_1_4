@@ -1,10 +1,11 @@
-from sqlmodel import Session, select, or_, col
-from rich import print as rprint
 import sqlalchemy as sa
+from rich import print as rprint
+from sqlmodel import Session, col, or_, select
+
 from create import create_heroes, create_heroes_rel, create_heroes_rel_attrs  # noqa: F401
-from select_queries import select_heroes_rel, select_heroes_rel_attrs_read
+from db import Hero, SQLModel, Team, engine
 from del_rel_attrs import update_heroes_del_rel
-from db import SQLModel, engine, Hero, Team
+from select_queries import select_heroes_rel, select_heroes_rel_attrs_read  # noqa: F401
 
 
 def get_tables():

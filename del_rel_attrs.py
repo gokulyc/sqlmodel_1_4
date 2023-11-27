@@ -1,6 +1,7 @@
-from db import engine, Hero, Team
-from sqlmodel import Session, select
 from rich import print as rprint
+from sqlmodel import Session, select
+
+from db import Hero, engine
 
 
 def update_heroes_del_rel():

@@ -1,6 +1,7 @@
-from db import engine, Hero, Team
-from sqlmodel import Session, select
 from rich import print as rprint
+from sqlmodel import Session, select
+
+from db import Hero, Team, engine
 
 
 def select_heroes_rel():
@@ -25,7 +26,7 @@ def select_heroes_rel():
             rprint("Hero:", hero, "Team:", team)
 
         rprint("If we only put the Team in the .join() and not in the select() function, we would not get the team data\n**********")
-        
+
         statement = select(Hero).join(Team).where(Team.name == "Preventers")
         results = session.exec(statement)
         for hero in results:

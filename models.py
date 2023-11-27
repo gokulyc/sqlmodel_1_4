@@ -1,5 +1,6 @@
 from typing import Optional
-from sqlmodel import Field, SQLModel, Relationship
+
+from sqlmodel import Field, Relationship, SQLModel
 
 
 class Team(SQLModel, table=True):
