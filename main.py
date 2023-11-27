@@ -2,20 +2,24 @@ from typing import Optional
 
 from sqlmodel import Field, Session, SQLModel, create_engine, select, or_, col
 from rich import print as rprint
-
+import sqlalchemy as sa
 
 class Hero(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
+    name: str = Field(index=True)
     secret_name: str
-    age: Optional[int] = None
+    age: Optional[int] = Field(default=None, index=True)
 
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-engine = create_engine(sqlite_url, echo=True)
+# engine = create_engine(sqlite_url, echo=True)
+engine = create_engine(sqlite_url)
 
+def drop_tables():
+    SQLModel.metadata.reflect(engine)
+    SQLModel.metadata.drop_all(engine)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
@@ -130,8 +134,49 @@ def select_heroes():
         for hero in results:
             rprint(hero)
 
+        #  Read one Row 0<= rows <=1
+
+        statement10 = select(Hero).where(col(Hero.age) >= 95)
+        results = sess.exec(statement10)
+        rprint(f"{str(statement10)} \n ------------------------")
+        hero = results.first()
+        rprint(f"Hero: {hero}")
+
+        #  Read one Row rows=1
+        statement11 = select(Hero).where(col(Hero.age) >= 95)
+        results = sess.exec(statement11)
+        rprint(f"{str(statement11)} \n ------------------------")
+        try:
+            hero = results.one()
+        except sa.exc.NoResultFound as e:
+            rprint(f"Warning : {e}")
+        else:
+            rprint(f"Hero: {hero}")
+        
+        # Select by Id
+        statement12 = select(Hero).where(Hero.id == 1)
+        results = sess.exec(statement12)
+        hero = results.first()
+        rprint("Hero:", hero)
+
+        # Select by Id with .get()
+        hero = sess.get(Hero, 1)
+        rprint("Hero:", hero)
+        hero = sess.get(Hero, 99)
+        rprint("Hero:", hero)
+        # LIMIT and OFFSET
+        statement13 = select(Hero).limit(3).offset(3)
+        results = sess.exec(statement13)
+        heroes = results.all()
+        rprint(heroes)
+
+        statement14 = select(Hero).limit(3).offset(6)
+        results = sess.exec(statement14)
+        heroes = results.all()
+        rprint(heroes)
 
 def main():
+    # drop_tables()
     # create_db_and_tables()
     # create_heroes()
     select_heroes()
