@@ -4,6 +4,7 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select, or_, col
 from rich import print as rprint
 import sqlalchemy as sa
 
+
 class Hero(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
@@ -14,12 +15,14 @@ class Hero(SQLModel, table=True):
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-# engine = create_engine(sqlite_url, echo=True)
-engine = create_engine(sqlite_url)
+engine = create_engine(sqlite_url, echo=True)
+# engine = create_engine(sqlite_url)
+
 
 def drop_tables():
     SQLModel.metadata.reflect(engine)
     SQLModel.metadata.drop_all(engine)
+
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
@@ -127,7 +130,7 @@ def select_heroes():
         rprint(f"{str(statement8)} \n ------------------------")
         for hero in results:
             rprint(hero)
-        
+
         statement9 = select(Hero).where(col(Hero.age) >= 35)
         results = sess.exec(statement9)
         rprint(f"{str(statement9)} \n ------------------------")
@@ -152,7 +155,7 @@ def select_heroes():
             rprint(f"Warning : {e}")
         else:
             rprint(f"Hero: {hero}")
-        
+
         # Select by Id
         statement12 = select(Hero).where(Hero.id == 1)
         results = sess.exec(statement12)
@@ -175,12 +178,88 @@ def select_heroes():
         heroes = results.all()
         rprint(heroes)
 
+
+def update_heroes():
+    with Session(engine) as session:
+        statement = select(Hero).where(Hero.name == "Spider-Boy")
+        results1 = session.exec(statement)
+        hero = results1.one()
+        rprint("Hero:", hero)
+
+        statement = select(Hero).where(Hero.name == "Captain North America")
+        results2 = session.exec(statement)
+        hero_2 = results2.one()
+        rprint("Hero 2:", hero_2)
+
+        hero.age = 16
+        session.add(hero)
+
+        hero_2.name = "Captain North America Except Canada"
+        hero_2.age = 110
+        session.add(hero_2)
+        session.commit()
+        
+        session.refresh(hero)
+        session.refresh(hero_2)
+
+        rprint("Updated hero 1 :", hero)
+        rprint("Updated hero 2:", hero_2)
+
+def update_heroes_2():
+    with Session(engine) as session:
+        statement = select(Hero).where(Hero.name == "Spider-Boy")
+        results = session.exec(statement)
+        hero_1 = results.one()
+        print("Hero 1:", hero_1)
+
+        statement = select(Hero).where(Hero.name == "Captain North America")
+        results = session.exec(statement)
+        hero_2 = results.one()
+        print("Hero 2:", hero_2)
+
+        hero_1.age = 16
+        hero_1.name = "Spider-Youngster"
+        session.add(hero_1)
+
+        hero_2.name = "Captain North America Except Canada"
+        hero_2.age = 110
+        session.add(hero_2)
+
+        session.commit()
+        session.refresh(hero_1)
+        session.refresh(hero_2)
+
+        print("Updated hero 1:", hero_1)
+        print("Updated hero 2:", hero_2)
+
+def delete_heroes():
+    update_heroes_2()
+    with Session(engine) as session:
+        rprint(session.exec(select(Hero)).all())
+        statement = select(Hero).where(Hero.name == "Spider-Youngster")
+        results = session.exec(statement)
+        hero = results.one()
+        rprint("Hero: ", hero)
+
+        session.delete(hero)
+        session.commit()
+
+        rprint("Deleted hero:", hero)
+
+        statement = select(Hero).where(Hero.name == "Spider-Youngster")
+        results = session.exec(statement)
+        hero = results.first()
+
+        if hero is None:
+            print("There's no hero named Spider-Youngster")
+
 def main():
     # drop_tables()
     # create_db_and_tables()
     # create_heroes()
-    select_heroes()
-
+    # select_heroes()
+    # update_heroes()
+    delete_heroes()
 
 if __name__ == "__main__":
     main()
