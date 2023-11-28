@@ -4,22 +4,9 @@ from sqlmodel import Session, col, or_, select
 
 import m_2_m
 from create import create_heroes, create_heroes_rel, create_heroes_rel_attrs  # noqa: F401
-from db import Hero, SQLModel, Team, engine
+from db import Hero, Team, create_db_and_tables, drop_tables, engine, get_tables
 from del_rel_attrs import update_heroes_del_rel  # noqa: F401
 from select_queries import select_heroes_rel, select_heroes_rel_attrs_read  # noqa: F401
-
-
-def get_tables():
-    rprint(SQLModel.metadata.tables)
-
-
-def drop_tables():
-    SQLModel.metadata.reflect(engine)
-    SQLModel.metadata.drop_all(engine)
-
-
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
 
 
 def select_heroes():
