@@ -1,6 +1,7 @@
-from sqlmodel import SQLModel, Session
-from db import Hero, engine, Team
 from rich import print as rprint
+from sqlmodel import Session, SQLModel
+
+from db import Hero, Team, engine
 
 
 def print_objs(objs: list[SQLModel]):

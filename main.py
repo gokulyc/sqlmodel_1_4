@@ -2,9 +2,10 @@ import sqlalchemy as sa
 from rich import print as rprint
 from sqlmodel import Session, col, or_, select
 
+import m_2_m
 from create import create_heroes, create_heroes_rel, create_heroes_rel_attrs  # noqa: F401
 from db import Hero, SQLModel, Team, engine
-from del_rel_attrs import update_heroes_del_rel
+from del_rel_attrs import update_heroes_del_rel  # noqa: F401
 from select_queries import select_heroes_rel, select_heroes_rel_attrs_read  # noqa: F401
 
 
@@ -238,8 +239,11 @@ def main():
     # update_heroes_rel_remove()
     # create_heroes_rel_attrs()
     # select_heroes_rel_attrs_read()
-    update_heroes_del_rel()
-
+    # update_heroes_del_rel()
+    # m_2_m.create.create_heroes_m2m()
+    # m_2_m.update_heroes()
+    # m_2_m.link_model.create_heroes()
+    m_2_m.link_model.update_heroes()
 
 if __name__ == "__main__":
     main()
